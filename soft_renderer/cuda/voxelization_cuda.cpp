@@ -33,6 +33,7 @@ std::vector<at::Tensor> voxelize_sub4_cuda(
 #define CHECK_CONTIGUOUS(x) TORCH_CHECK(x.is_contiguous(), #x " must be contiguous")
 #define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
 
+namespace softras {
 
 std::vector<at::Tensor> voxelize_sub1(
         at::Tensor faces,
@@ -74,10 +75,13 @@ std::vector<at::Tensor> voxelize_sub4(
     return voxelize_sub4_cuda(faces, voxels, visible);
 }
 
-
-PYBIND11_MODULE(voxelization, m) {
-    m.def("voxelize_sub1", &voxelize_sub1, "VOXELIZE_SUB1 (CUDA)");
-    m.def("voxelize_sub2", &voxelize_sub2, "VOXELIZE_SUB2 (CUDA)");
-    m.def("voxelize_sub3", &voxelize_sub3, "VOXELIZE_SUB3 (CUDA)");
-    m.def("voxelize_sub4", &voxelize_sub4, "VOXELIZE_SUB4 (CUDA)");
 }
+
+#ifndef SOFTRAS_IGNORE_PYBIND
+PYBIND11_MODULE(voxelization, m) {
+    m.def("voxelize_sub1", &softras::voxelize_sub1, "VOXELIZE_SUB1 (CUDA)");
+    m.def("voxelize_sub2", &softras::voxelize_sub2, "VOXELIZE_SUB2 (CUDA)");
+    m.def("voxelize_sub3", &softras::voxelize_sub3, "VOXELIZE_SUB3 (CUDA)");
+    m.def("voxelize_sub4", &softras::voxelize_sub4, "VOXELIZE_SUB4 (CUDA)");
+}
+#endif

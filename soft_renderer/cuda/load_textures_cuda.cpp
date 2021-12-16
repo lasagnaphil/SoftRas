@@ -14,6 +14,7 @@ at::Tensor load_textures_cuda(
 #define CHECK_CONTIGUOUS(x) TORCH_CHECK(x.is_contiguous(), #x " must be contiguous")
 #define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
 
+namespace softras {
 
 at::Tensor load_textures(
         at::Tensor image,
@@ -27,10 +28,14 @@ at::Tensor load_textures(
     CHECK_INPUT(textures);
 
     return load_textures_cuda(image, faces, textures, is_update);
-                                      
+
 }
 
+}
+
+#ifndef SOFTRAS_IGNORE_PYBIND
 //PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 PYBIND11_MODULE(load_textures, m) {
-    m.def("load_textures", &load_textures, "LOAD_TEXTURES (CUDA)");
+    m.def("load_textures", &softras::load_textures, "LOAD_TEXTURES (CUDA)");
 }
+#endif

@@ -14,6 +14,7 @@ at::Tensor create_texture_image_cuda(
 #define CHECK_CONTIGUOUS(x) TORCH_CHECK(x.is_contiguous(), #x " must be contiguous")
 #define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
 
+namespace softras {
 
 at::Tensor create_texture_image(
         at::Tensor vertices_all,
@@ -24,11 +25,14 @@ at::Tensor create_texture_image(
     CHECK_INPUT(vertices_all);
     CHECK_INPUT(textures);
     CHECK_INPUT(image);
-    
+
     return create_texture_image_cuda(vertices_all, textures, image, eps);
 }
 
+}
+#ifndef SOFTRAS_IGNORE_PYBIND
 // PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
 PYBIND11_MODULE(create_texture_image, m) {
-    m.def("create_texture_image", &create_texture_image, "CREATE_TEXTURE_IMAGE (CUDA)");
+    m.def("create_texture_image", &softras::create_texture_image, "CREATE_TEXTURE_IMAGE (CUDA)");
 }
+#endif
